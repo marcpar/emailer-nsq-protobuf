@@ -3,10 +3,8 @@ import nsqReader from "./config/nsq";
 import chalk from 'chalk';
 import figlet from 'figlet';
 import { } from 'dotenv/config';
-import Email from "./proto/email_pb";
 import EmailMessage from "./emailMessage";
-import fs from "fs";
-import path from "path";
+
 
 /**
  * Banner for EMAILER
@@ -47,8 +45,9 @@ nsqReader.on('message', msg => {
     console.log('Received message [%s]: %s', msg.id, msg.body)
     // console.log(Email.deserializeBinary(msg.body))
 
-    const html = fs.readFileSync(path.resolve(__dirname, "./email_template/notification/notification.html"), 'utf8');
-    emailer(new EmailMessage('"Fred Foo 👻" <foo@example.com>', "bar@example.com, baz@example.com", "Hello ✔", "Hello world?", html));
+
+
+    emailer(new EmailMessage('"Fred Foo 👻" <foo@example.com>', "bar@example.com, baz@example.com", "Hello ✔", "test", html));
 
 
     msg.finish()

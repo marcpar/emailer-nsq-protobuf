@@ -5,7 +5,7 @@ import { } from 'dotenv/config';
 
 // async..await is not allowed in global scope, must use a wrapper
 export default async function emailer(emailMessage) {
-    console.log(emailMessage);
+
     let info;
     try {
         // send mail with defined transport object
