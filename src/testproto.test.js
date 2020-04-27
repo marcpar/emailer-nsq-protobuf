@@ -1,23 +1,21 @@
-const Schema = require("./proto/email_pb");
-var protobuf = require("protobufjs/minimal");
+const protos = require("./proto/email_pb");
+const protobuf = require("protobufjs");
+
+
+
 const nsq = require('nsqjs')
 function sendnsq() {
-    let sender = new Schema.Email();
-    sender.setFrom('"Fred Foo 👻" <foo@example.com>')
-    sender.setTo("bar@example.com")
-    sender.setSubject("Hello ✔")
-    sender.setText("Hello world?")
-    sender.setHtml("<h3>HELLO WORLD MEN!!!<h3>")
+    let sender = protos.email.Email.create();
+    sender.from = ['"Fred Foo 👻" <foo@example.com>'];
+    sender.to = ["bar@example.com", "baz@example.com"];
+    sender.subject = "Helloww"
+    sender.text = "hello world?";
+    sender.html = Buffer.from("<b>Hello world?</b>");
 
-    protobuf.load("./proto/email.proto", function (err, root) {
-        if (err)
-            throw err;
 
-        var EmailMessage = root.lookupType
-    });
-
+    let byte = protos.email.Email.encode(sender).finish();
     //let bytes = sender.serializeBinary();
-    console.log("Serialize: ", sender.serializeBinary());
+    console.log("Serialize: ", byte);
     // console.log("Deserialize", Schema.deserializeBinary(bytes))
 
     const w = new nsq.Writer('127.0.0.1', 4150)
@@ -25,7 +23,7 @@ function sendnsq() {
 
     w.on('ready', () => {
         console.log("binary")
-        w.publish('sample_topic', sender.serializeBinary(), err => {
+        w.publish('email', byte, err => {
             if (err) { return console.error(err.message) }
             console.log('Message sent successfully')
             w.close()

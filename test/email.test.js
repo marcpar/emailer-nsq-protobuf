@@ -2,7 +2,7 @@ import { expect } from "chai";
 import emailer from "../src/emailer";
 import EmailMessage from "../src/emailMessage";
 import dsproto from "../src/deserializeProto";
-import Schema from "../src/proto/email_pb";
+import protos from "../src/proto/email_pb";
 import nsq from 'nsqjs';
 import fs from "fs";
 import path from "path";
@@ -20,40 +20,51 @@ describe("NSQ EMAILER", () => {
 
             expect(true).to.equal(result)
 
-        }).timeout(10000);
+        }).timeout(4000);
     });
 
     describe("Deserialize protobuf", () => {
         it("should be able to deserialize protobuf", () => {
             let byte = createProtobuf();
-            console.log("TEST: " + dsproto(byte));
-            // let email = new EmailMessage
+            let email = dsproto(byte);
+            console.log("TEST: " + email.from);
 
-            expect('"Fred Foo 👻" <foo@example.com>').to.equal(email.from);
-            expect("bar@example.com").to.equal(email.to);
 
+            expect(['"Fred Foo 👻" <foo@example.com>']).to.eql(email.from);
+            expect(["bar@example.com", "baz@example.com"]).to.eql(email.to);
 
         });
     });
 
     describe("Send NSQ", () => {
-        it("should be able to send messages to nsq", () => {
+
+        it("should be able to send messages to nsq", (done) => {
             let sent = sendnsq();
+            console.log("send nsq")
+            setTimeout(done, 15000);
             expect(true).to.equal(sent);
-        });
+        }).timeout(4000);
     });
 });
 
 function createProtobuf() {
-    let sender = new Schema.Email();
+    let sender;
     let byte;
     try {
-        sender.setFrom('"Fred Foo 👻" <foo@example.com>');
-        sender.setTo("bar@example.com");
-        sender.setSubject("Hello ✔");
-        sender.setText("Hello world?");
-        sender.setHtml("<h3>HELLO WORLD MEN!!!<h3>");
-        byte = sender.serializeBinary();
+        sender = protos.email.Email.create({
+            "from": ['"Fred Foo 👻" <foo@example.com>'],
+            "to": ["bar@example.com", "baz@example.com"],
+            "subject": "helloww",
+            "text": "hello world?",
+            "html": Buffer.from("<b>Hello world?</b>")
+        })
+        // sender.from =['"Fred Foo 👻" <foo@example.com>'] ;
+        // sender.to = ["bar@example.com", "baz@example.com"];
+        // sender.subject = "Helloww"
+        // sender.text = "hello world?";
+        // sender.html = "<b>Hello world?</b>";
+
+        byte = protos.email.Email.encode(sender).finish();
     } catch (error) {
         console.error("error: ", error);
     }
@@ -64,14 +75,15 @@ function createProtobuf() {
 function sendnsq() {
 
     let byte = createProtobuf();
-    const w = new nsq.Writer('127.0.0.1', 4150)
 
+    const w = new nsq.Writer('127.0.0.1', 4150)
     w.connect();
 
     w.on('ready', () => {
 
-        w.publish('Email', byte, err => {
-            if (err) { return console.error(err.message) }
+        w.publish('email', byte, err => {
+            console.log("ready")
+            if (err) { return console.error("Error: ", err.message) }
             console.log('Message sent successfully')
             return true;
             w.close()

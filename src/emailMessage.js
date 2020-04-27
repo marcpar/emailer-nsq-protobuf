@@ -4,7 +4,7 @@
  *  
  *  @param {String} subject 
  *  @param {String} text 
- *  @param {Blob} body
+ *  @param {byte} body
  */
 export default class EmailMessage {
     constructor(from, to, subject, text, html) {

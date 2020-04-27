@@ -25,14 +25,16 @@
     "chai": "^4.2.0",
     "mocha": "^7.1.1",
     "nodemon": "^2.0.3",
-    "nyc": "^15.0.1"
+    "nyc": "^15.0.1",
+    "protobuf-jsonschema": "^1.1.1"
   },
   "scripts": {
     "prod": "NODE_ENV=production node build/index.js",
     "dev": "nodemon  --exec babel-node src/index.js",
     "test": "mocha --reporter=min --require @babel/register --require babel-polyfill ./test/*.test.js -w",
-    "coverage": "nyc --require @babel/register yarn test",
+    "coverage": "nyc --reporter=lcov --reporter=text-summary ava --require @babel/register yarn run test",
     "clean": "rm -rf dist && mkdir dist",
-    "build": "babel -d ./dist ./server -s"
+    "build": "babel -d ./dist ./server -s",
+    "pbjs": "pbjs -t static-module -w commonjs -o src/proto/email_pb.js src/proto/email.proto"
   }
 }

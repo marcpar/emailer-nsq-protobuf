@@ -4,6 +4,7 @@ import chalk from 'chalk';
 import figlet from 'figlet';
 import { } from 'dotenv/config';
 import EmailMessage from "./emailMessage";
+import dsproto from "../src/deserializeProto";
 
 
 /**
@@ -35,19 +36,16 @@ console.table([
   { environment: "NODE_ENV", "value": process.env.NODE_ENV }]
 )
 
-
-
 nsqReader.connect();
 
 nsqReader.on('message', msg => {
   try {
 
     console.log('Received message [%s]: %s', msg.id, msg.body)
+    let email = dsproto(msg.body);
+    console.log(email);
     // console.log(Email.deserializeBinary(msg.body))
-
-
-
-    emailer(new EmailMessage('"Fred Foo 👻" <foo@example.com>', "bar@example.com, baz@example.com", "Hello ✔", "test", html));
+    emailer(email);
 
 
     msg.finish()
