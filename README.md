@@ -2,6 +2,8 @@
 
 Email queueing 
 
+Example [link](https://ethereal.email/message/XqOKI9KymicjNFLjXqbB5QYZeydLip06AAAAy78PW5heGleKXd2tcfuXwPM)
+
 ## Running
 
 I use docker-compose.

@@ -41,10 +41,8 @@ nsqReader.connect();
 nsqReader.on('message', msg => {
   try {
 
-    console.log('Received message [%s]: %s', msg.id, msg.body)
+
     let email = dsproto(msg.body);
-    console.log(email);
-    // console.log(Email.deserializeBinary(msg.body))
     emailer(email);
 
 
@@ -58,11 +56,4 @@ nsqReader.on('message', msg => {
 
 
 
-// try {
-//   const html = fs.readFileSync("src/email_template/notification/notification.html", 'utf8');
-//   console.log(emailer('"Fred Foo 👻" <foo@example.com>', "bar@example.com, baz@example.com", "Hello ✔", "Hello world?", html));
-// }
-// catch (err) {
-//   console.error(err)
-// }
 
