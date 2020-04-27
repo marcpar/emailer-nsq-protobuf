@@ -51,12 +51,13 @@ function createProtobuf() {
     let sender;
     let byte;
     try {
+        const html = fs.readFileSync(path.resolve(__dirname, "../src/email_template/notification/notification.html"), 'utf8');
         sender = protos.email.Email.create({
             "from": ['"Fred Foo 👻" <foo@example.com>'],
             "to": ["bar@example.com", "baz@example.com"],
             "subject": "helloww",
             "text": "hello world?",
-            "html": Buffer.from("<b>Hello world?</b>")
+            "html": Buffer.from(html)
         })
         // sender.from =['"Fred Foo 👻" <foo@example.com>'] ;
         // sender.to = ["bar@example.com", "baz@example.com"];
