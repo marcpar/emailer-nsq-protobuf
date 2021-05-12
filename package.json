@@ -11,7 +11,7 @@
     "global": "^4.4.0",
     "google-protobuf": "^3.11.4",
     "mjml": "^4.6.2",
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.16",
     "nsqjs": "^0.12.1",
     "protobufjs": "^6.9.0"
   },
